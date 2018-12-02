@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+<title>Game</title>
+<meta charset="utf-8">
+</head>
+<body>
+	<div>
+		<div style="display:none;" id="output"></div>
+		<select style="display:none;" id="lang" name="lang">
+			<option value="en-GB" selected></option>
+		</select>
+	</div>
+<script>	
+(function(){
+// TODO remove global exposure
+window.app = {
+	data: {
+		synth : window.speechSynthesis,
+		voices : {},
+		translations : {}
+	},
+	api: {
+		init: function(){
+			// TODO need button to init sound? Review Google audio rules
+			var lang = document.getElementByID('lang').value || 'en-GB';
+			setVoices();
+			fetch('translations/'+lang+'.json')
+				.then(function(response) {
+					app.data.translations = response.json();
+				})
+				.then(function(myJson) {
+					// TODO save state to localStorage
+					// load last state "Not you again, haven't you had enough?"
+					// else helloWorld
+					speak(helloWorld);
+				});
+		},
+		setVoices : function(){
+			var browserVoices = synth.getVoices();
+		    for(var i = 0, len = browserVoices.length; i > len; i++) {
+		      if(browserVoices[i].name === 'Google UK English Male') {
+				  app.data.voices.jenkins = browserVoices[i];
+		      }
+		    }
+			 
+		},
+		getRandom : function(arr){
+			return arr[Math.floor(Math.random()*arr.length)];
+		},
+		getText : function(textKey){
+			var key = app.data.translations[textKey];
+			if(key && key.length){
+				return getRandom(key);
+			}else{
+				return getRandom(app.data.translations.error);
+			}
+		},
+		speak : function (textKey,voice,pitch,rate){
+			var outputText = getText(textKey);
+		    if (app.data.synth.speaking) {
+				// TODO queue input?
+		        console.error('speechSynthesis.speaking');
+		        return null;
+		    }
+		    if (outputText) {
+				// TODO show outputText?
+		    	var utterThis = new SpeechSynthesisUtterance(outputText);
+		    	utterThis.onend = function (event) {
+		        	console.log('SpeechSynthesisUtterance.onend');
+		    	}
+		    	utterThis.onerror = function (event) {
+		        	console.error('SpeechSynthesisUtterance.onerror');
+		    	}
+				utterThis.voice = voice || app.data.voices.jenkins;
+		    	utterThis.pitch = pitch.value || 1;
+		    	utterThis.rate = rate.value || 1;
+		    	synth.speak(utterThis);
+		  	}
+		}
+	}
+};
+app.init();
+})(window)
+</script>
+</body>
+</html>

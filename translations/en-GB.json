@@ -1,0 +1,13 @@
+{
+	"error" : {
+		"What did you do?  Did you press a button?  If so, it was the wrong one.",
+		"I wasn't paying attention, try saying something interesting."
+	},
+	"start" : {
+		"helloWorld" : [
+			"Hello World. Rather cliche don't you think?",
+			"Hello, remember not to push my buttons.",
+			"Good day to you fleshy being."
+		]
+	}
+}
