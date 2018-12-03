@@ -1,13 +1,22 @@
 {
-	"error" : {
+	"error" : [
 		"What did you do?  Did you press a button?  If so, it was the wrong one.",
 		"I wasn't paying attention, try saying something interesting."
-	},
+	],
 	"start" : {
 		"helloWorld" : [
 			"Hello World. Rather cliche don't you think?",
-			"Hello, remember not to push my buttons.",
-			"Good day to you fleshy being."
+			"Hello. Remember, not to push my buttons.",
+			"Good day to you. Fleshy being."
+		],
+		"askName" : [
+			"What is your serial number?  Or perhaps, you refer to it as name."
+		],
+		"clickToSpeak" : [
+			"No, no, human.  Mind your manners. Click or touch the screen before you speak."
+		],
+		"nameResponse" : [
+			"Really? {{0}}, that's what you want to call yourself? {{1}}"
 		]
 	}
 }

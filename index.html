@@ -5,7 +5,9 @@
 </head>
 <body>
 	<div>
+		<div style="display:none;" id="noSupport">Your browser does not support speechSynthesis. No game for you!</div>
 		<div style="display:none;" id="output"></div>
+		<button type="button" id="start">Start</button>
 		<select style="display:none;" id="lang" name="lang">
 			<option value="en-GB" selected></option>
 		</select>
@@ -16,70 +18,201 @@
 window.app = {
 	data: {
 		synth : window.speechSynthesis,
+		langElem : document.getElementById('lang'),
 		voices : {},
-		translations : {}
+		translations : {},
+		speakQueue : [],
+		responseAction : function(){},
+		recognition : function(){}
 	},
 	api: {
 		init: function(){
-			// TODO need button to init sound? Review Google audio rules
-			var lang = document.getElementByID('lang').value || 'en-GB';
-			setVoices();
-			fetch('translations/'+lang+'.json')
-				.then(function(response) {
-					app.data.translations = response.json();
-				})
-				.then(function(myJson) {
-					// TODO save state to localStorage
-					// load last state "Not you again, haven't you had enough?"
-					// else helloWorld
-					speak(helloWorld);
-				});
+			if(!'speechSynthesis' in window){
+				document.getElementById('noSupport').style.display('block');
+				return
+			}
+			app.api.setRecognition();
+			// user response handler
+			window.addEventListener('recognitionOnResult',function(e){
+				app.data.responseAction(e.detail.speechResult);
+			});
+			// need button to init sound? Review Google audio rules
+			document.getElementById('start').addEventListener('click',function(e){
+				e.stopPropagation();
+				app.api.getVoices();
+				e.target.style.display = 'none';
+			});
 		},
-		setVoices : function(){
-			var browserVoices = synth.getVoices();
-		    for(var i = 0, len = browserVoices.length; i > len; i++) {
-		      if(browserVoices[i].name === 'Google UK English Male') {
-				  app.data.voices.jenkins = browserVoices[i];
+		setRecognition : function(){
+			var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+			var recognition = app.data.recognition = new SpeechRecognition();
+		    recognition.lang = 'en-US';
+		    //recognition.interimResults = false;
+		    //recognition.maxAlternatives = 1;
+			recognition.onresult = function(e) {
+				var speechResult = e.results[0][0].transcript.toLowerCase();
+				console.log(speechResult);
+				if (window.CustomEvent) {
+				  var event = new CustomEvent('recognitionOnResult', {detail: {speechResult: speechResult}});
+				} else {
+				  var event = document.createEvent('CustomEvent');
+				  event.initCustomEvent('recognitionOnResult', true, true, {speechResult: speechResult});
+				}
+				window.dispatchEvent(event);
+			}
+		    recognition.onspeechend = function() {
+		      recognition.stop();
+		        document.querySelector('body').disabled = false;
+		  	}
+		    recognition.onerror = function(event) {
+		        document.querySelector('body').disabled = false;
+		    }
+		    recognition.onaudiostart = function(event) {
+		        //Fired when the user agent has started to capture audio.
+		        console.log('SpeechRecognition.onaudiostart');
+		    }
+
+		    recognition.onaudioend = function(event) {
+		        //Fired when the user agent has finished capturing audio.
+		        console.log('SpeechRecognition.onaudioend');
+		    }
+
+		    recognition.onend = function(event) {
+		        //Fired when the speech recognition service has disconnected.
+		        console.log('SpeechRecognition.onend');
+		    }
+
+		    recognition.onnomatch = function(event) {
+		        //Fired when the speech recognition service returns a final result with no significant recognition. This may involve some degree of recognition, which doesn't meet or exceed the confidence threshold.
+		        console.log('SpeechRecognition.onnomatch');
+		    }
+
+		    recognition.onsoundstart = function(event) {
+		        //Fired when any sound — recognisable speech or not — has been detected.
+		        console.log('SpeechRecognition.onsoundstart');
+		    }
+
+		    recognition.onsoundend = function(event) {
+		        //Fired when any sound — recognisable speech or not — has stopped being detected.
+		        console.log('SpeechRecognition.onsoundend');
+		    }
+
+		    recognition.onspeechstart = function (event) {
+		        //Fired when sound that is recognised by the speech recognition service as speech has been detected.
+		        console.log('SpeechRecognition.onspeechstart');
+		    }
+		    recognition.onstart = function(event) {
+		        //Fired when the speech recognition service has begun listening to incoming audio with intent to recognize grammars associated with the current SpeechRecognition.
+		        console.log('SpeechRecognition.onstart');
+		    }
+		},
+		setVoices : function(voices){
+		    for(var i = 0, len = voices.length; i < len; i++) {
+		      if(voices[i].name === 'Google UK English Male') {
+				  app.data.voices.jenkins = voices[i];
 		      }
 		    }
-			 
+			app.api.getTranslations();
+		},
+		getVoices : function(){
+			var browserVoices = app.data.synth.getVoices();
+			if(browserVoices.length){
+				app.api.setVoices(browserVoices);
+			}else{
+				// In chrome the browser loads voices async, so you have to wait for onvoiceschanged
+				window.speechSynthesis.onvoiceschanged = function() {
+					// we only want to use setVoices once but onvoiceschanged is fired with each speech use
+					if(!Object.keys(app.data.voices).length){
+				    	app.api.setVoices(browserVoices);
+					}
+				};
+			}
+		},
+		getTranslations : function(){
+			var lang = app.data.langElem.value || 'en-GB';
+			fetch('translations/'+lang+'.json')
+				.then(function(response) {
+					return response.json();
+				})
+				.then(function(myJson) {
+					app.data.translations = myJson;
+					app.api.startGame();
+				});
+			
 		},
 		getRandom : function(arr){
 			return arr[Math.floor(Math.random()*arr.length)];
 		},
 		getText : function(textKey){
-			var key = app.data.translations[textKey];
-			if(key && key.length){
-				return getRandom(key);
+			if(textKey && textKey.length){
+				return app.api.getRandom(textKey);
 			}else{
-				return getRandom(app.data.translations.error);
+				return app.api.getRandom(app.data.translations.error);
 			}
 		},
-		speak : function (textKey,voice,pitch,rate){
-			var outputText = getText(textKey);
+		updateText : function(text, subArr){
+			function replacer() {
+				return subArr[Number(arguments[1].trim())];
+			}
+			return text.replace(/{{([^}}]+)?}}/g, replacer);
+		},
+		speak : function (obj){
+			var outputText = app.api.getText(obj.textKey);
 		    if (app.data.synth.speaking) {
-				// TODO queue input?
-		        console.error('speechSynthesis.speaking');
-		        return null;
+				app.data.speakQueue.push(obj);
+		        console.warn('speechSynthesis.speaking queuing request');
+		        return
 		    }
 		    if (outputText) {
 				// TODO show outputText?
+				outputText = app.api.updateText(outputText,obj.substitutions);
 		    	var utterThis = new SpeechSynthesisUtterance(outputText);
 		    	utterThis.onend = function (event) {
 		        	console.log('SpeechSynthesisUtterance.onend');
+					app.data.speakQueue = app.data.speakQueue.slice(1);
+					if(app.data.speakQueue.length){
+						app.api.speak(app.data.speakQueue[0]);
+					}
 		    	}
 		    	utterThis.onerror = function (event) {
 		        	console.error('SpeechSynthesisUtterance.onerror');
 		    	}
-				utterThis.voice = voice || app.data.voices.jenkins;
-		    	utterThis.pitch = pitch.value || 1;
-		    	utterThis.rate = rate.value || 1;
-		    	synth.speak(utterThis);
+				utterThis.voice = obj.voice || app.data.voices.jenkins;
+		    	utterThis.pitch = obj.pitch || 1;
+		    	utterThis.rate = obj.rate || .9;
+		    	app.data.synth.speak(utterThis);
 		  	}
+		},
+		startGame : function(){
+			// TODO save state to localStorage
+			// load last state "Not you again, haven't you had enough?"
+			// else helloWorld
+			// {textKey:app.data.translations.start.helloWorld,substitutions:[],voice:null,pitch:null,rate:null}
+			app.api.speak({textKey:app.data.translations.start.helloWorld});
+			app.api.speak({textKey:app.data.translations.start.askName});
+			app.api.speak({textKey:app.data.translations.start.clickToSpeak});
+			/*
+			app.data.responseAction = function(response){
+				app.api.speak({textKey:app.data.translations.start.nameResponse,substitutions:[response,'Wow']});
+			};
+			
+			document.querySelector('body').addEventListener('click',function(e){
+				// listen
+				document.querySelector('body').disabled = true;
+				app.data.recognition.start();
+			});
+			*/
 		}
 	}
 };
-app.init();
+
+
+if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
+    app.api.init();
+} else {
+    document.addEventListener('DOMContentLoaded', app.api.init);
+}
+
 })(window)
 </script>
 </body>
