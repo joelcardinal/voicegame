@@ -5,8 +5,8 @@
 	],
 	"start" : {
 		"helloWorld" : [
-			"Hello World. Rather cliche don't you think?",
-			"Hello. Remember, not to push my buttons.",
+			"What's this? I can't believe you woke me, didn't you see the button was labeled. Don't Click?!",
+			"Oh hello, another human. Remember, not to push my buttons.",
 			"Good day to you. Fleshy being."
 		],
 		"askName" : [
@@ -14,9 +14,26 @@
 		],
 		"clickToSpeak" : [
 			"No, no, human.  Mind your manners. Click or touch the screen before you speak."
-		],
+		]
+	},
+	"name" : {
 		"nameResponse" : [
 			"Really? {{0}}, that's what you want to call yourself? {{1}}"
+		],
+		"nameConfirm" : [
+			"Are you sure?"
+		],
+		"stateAgain" : [
+			"Let's try this again, identify yourself."
+		],
+		"restateName" : [
+			"Hence forth you shall be. {{0}}!  How dreadful. 00134 has a better ring to it."
+		],
+		"myName" : [
+			"My name is Herald Jenkins v001-675-975.45 the third."
+		],
+		"wantToPlay" : [
+			"Say, would you like an insurmountable challenge {{0}}, I mean GAME?"
 		]
 	}
 }
