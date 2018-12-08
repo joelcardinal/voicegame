@@ -91,19 +91,25 @@
 			"fleshy"
 		],
 		"defaultPlace" : [
-			"toilet",
+			"Vermont",
 			"Pluto",
 			"moon"
 		],
 		"defaultNoun" : [
-			""
+			"worm",
+			"toilet",
+			"turkey"
 		],
 		"defaultBodyPart" : [
-
+			"belly button",
+			"toe",
+			"zit"
 		],
 		"defaultEat" : [
-
-		],
+			"banana",
+			"taco",
+			"jelly"
+		]
 	},
 	"giantStory" : {
 		"1":["In a {{0}} town, not too far, there lived a giant named Geoffrey."],
@@ -116,5 +122,20 @@
 		"8":["What if I was to fly to the {{0}} and bring back {{1}}?"],
 		"9":["That is preposterous. Said the giant."],
 		"10":["Day in and day out the giant and parrot lived out their {{0}} lives as the {{1}} humans below went about their {{2}} lives."]
+	},
+	"end" : {
+		"bad" : [
+			"I don't appear to be lauging. That was perposterous. {{0}}. Where is the realism?",
+			"Look at my face. No smile. No smirking. No giggling. No laughter.  Where was the funny?",
+			"I thought you were going to make something funny. {{0}}. How immature."
+		],
+		"eraseStory" : [
+			"I'm going to void the memory block that is storing the story. Ha, ha, ha. Storing the story. Why can't you be that funny?",
+			"If I had soap, I'd wash the memory addresses storing the story. Ha, ha, ha. Storing the story. Why can't you be that funny?",
+			"I feel dirty and need to wipe my memory clean.  Much like you filthy homosapians do to your bum."
+		],
+		"terminating" : [
+			"Terminating program."
+		]
 	}
 }

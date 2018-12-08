@@ -346,6 +346,15 @@ window.app = {
 					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.giantStory["10"],substitutions:[arr[12],arr[13],arr[14]]})
 					});
+			},
+			terminating : function(){
+				var arr = app.data.giantStoryInput;
+				app.api.speak({textKey:app.data.translations.end.bad,substitutions:[arr[5]]})
+					.then(function(r) {
+						return app.api.speak({textKey:app.data.translations.end.eraseStory})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.end.terminating,substitutions:[arr[8]]})
+					})
 			}
 		}
 	}
