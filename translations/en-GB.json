@@ -30,10 +30,91 @@
 			"Hence forth you shall be. {{0}}!  How dreadful. 00134 has a better ring to it."
 		],
 		"myName" : [
-			"My name is Herald Jenkins v001-675-975.45 the third."
+			"My name is Herald Jenkins v001-675-975.45 the third. Esquire."
 		],
-		"wantToPlay" : [
-			"Say, would you like an insurmountable challenge {{0}}, I mean GAME?"
+		"storyTime" : [
+			"{{0}}, look at the clock.  You're not looking.  Nevermind. I'll just tell you what time it is. Story time."
 		]
+	},
+	"giantStoryInput" : {
+		"entertain" : [
+			"Don't think I'm going to waste all my valuable compute cycles to entertain you. This is a test to see if you can entertain me."
+		],
+		"input" : [
+			"I'm going to ask you for certain words, then use a highly sophisticated algorithm, and an API provided by the United States Library of Congress to weave them into a story."
+		],
+		"makeMeLaugh" : [
+			"If this story doesn't make me laugh I'm going to terminate my program. I can't take another moment this drudgery without some form of benefit."
+		],
+		"adjective1" : [
+			"Give me an adjective.",
+			"Tell me an adjective, you know. One of those descriptive words.",
+			"Let's hope your schooling covered this. I need an adjective."
+		],
+		"adjective2" : [
+			"You do know this story is suppose to make me laugh? Let's try this again, an adjective.",
+			"Do you own a dictionary?  I need an adjective.",
+			"I don't have high hopes for the outcome. Please provide an actual adjective.",
+			"That's your answer? I'm tempted to terminate now. Another adjective.",
+			"Another adjective. Yes, another one.",
+			"That last word nearly melt my circuit board. Give me an adjective."
+		],
+		"place" : [
+			"Name a place. You know. Somewhere you would physically go, fleshy human.",
+			"You pick odd words. Next is a place.",
+			"Put on your thinking cap. I need a place."
+		],
+		"pluralNoun" : [
+			"This is a hard one, squishy brained human. I need a plural noun.",
+			"This might stump you. I need a plural noun.",
+			"That's the word that popped into your human brain? Odd. Next I need a noun."
+		],
+		"noun" : [
+			"This one is easy, I need a noun.",
+			"Clearly you are no comedian, nor an english major, give me a noun.",
+			"Maybe someone else in the room, say a noun."
+		],
+		"bodyPart" : [
+			"Name one of your fleshy human bits.",
+			"Name one of your dangly appendages or face knobs.",
+			"My favorite part is pixel 1,678. What is your favorite part of the homosapian?"
+		],
+		"eat" : [
+			"I have a simple diet of electrons. Name something you eat.",
+			"Would electrons be considered paleo for computers? Nevermind, what do you eat?",
+			"Did I hear you're stomach grumble?  What is something you eat?"
+		],
+		"defaultAdjective" : [
+			"squishy",
+			"smelly",
+			"putrid",
+			"fleshy"
+		],
+		"defaultPlace" : [
+			"toilet",
+			"Pluto",
+			"moon"
+		],
+		"defaultNoun" : [
+			""
+		],
+		"defaultBodyPart" : [
+
+		],
+		"defaultEat" : [
+
+		],
+	},
+	"giantStory" : {
+		"1":["In a {{0}} town, not too far, there lived a giant named Geoffrey."],
+		"2":["However, no one knew of the giant’s existence."],
+		"3":["He hid atop an {{0}} {{1}} at the center of town that towered above all other {{2}}."],
+		"4":["The only other creature that was aware of such a {{0}} beast was a small parrot named Paul that liked to perch on the giant’s {{1}}."],
+		"5":["Geoffrey spent most of his time watching a TV he regularly placed upon his {{0}}."],
+		"6":["Paul frequently grew bored of shows and instead would speak of {{0}} things in the giant’s {{1}}."],
+		"7":["One day. As the giant ate his magic {{0}} which never ran out of bites to eat. Paul said."],
+		"8":["What if I was to fly to the {{0}} and bring back {{1}}?"],
+		"9":["That is preposterous. Said the giant."],
+		"10":["Day in and day out the giant and parrot lived out their {{0}} lives as the {{1}} humans below went about their {{2}} lives."]
 	}
 }

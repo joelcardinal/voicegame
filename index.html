@@ -29,6 +29,7 @@
 // add aria-disable true when can't click?
 // multi-browser support and api checks, currently only for non-mobile Chrome
 // logic or external script to use translation service
+// do something funny with name like reverse it?  Re-order story input?
 window.app = {
 	data: {
 		synth : window.speechSynthesis,
@@ -39,7 +40,8 @@ window.app = {
 		speechResult : '',
 		recognition : function(){},
 		utterance : {},
-		playerName : ''
+		playerName : '',
+		giantStoryInput : []
 	},
 	api: {
 		init: function(){
@@ -236,21 +238,21 @@ window.app = {
 		},
 		Game : {
 			start : function(){
-			// NOTE: {textKey:app.data.translations.start.helloWorld,substitutions:[],voice:null,pitch:null,rate:null}
-			app.api.speak({textKey:app.data.translations.start.helloWorld})
-				.then(function(r) {
-				    return app.api.speak({textKey:app.data.translations.start.askName})
-				}).then(function(r) {
-					document.querySelector('body').addEventListener('click',function(e){
-						// listen
-						document.querySelector('body').classList.add('noClick');
-						app.data.recognition.start();
+				// NOTE: {textKey:app.data.translations.start.helloWorld,substitutions:[],voice:null,pitch:null,rate:null}
+				app.api.speak({textKey:app.data.translations.start.helloWorld})
+					.then(function(r) {
+						return app.api.speak({textKey:app.data.translations.start.askName})
+					}).then(function(r) {
+						document.querySelector('body').addEventListener('click',function(e){
+							// listen
+							document.querySelector('body').classList.add('noClick');
+							app.data.recognition.start();
+						});
+						app.data.responseAction = function(){
+							app.api.Game.name();
+						}
+						return app.api.speak({textKey:app.data.translations.start.clickToSpeak});
 					});
-					app.data.responseAction = function(){
-						app.api.Game.name();
-					}
-					return app.api.speak({textKey:app.data.translations.start.clickToSpeak});
-				})
 			},
 			name : function(){
 				// TODO if name found in localStorage, "Not you again, haven't you had enough?" then
@@ -270,21 +272,79 @@ window.app = {
 					.then(function(r) {
 						app.data.responseAction = function(){
 							app.api.createPlayer();
-							app.api.Game.resolveName();
+							app.api.Game.storyTime();
 						}
 						return app.api.speak({textKey:app.data.translations.start.askName})
 					});
 				}else{
-					app.api.Game.resolveName();
+					app.api.Game.storyTime();
 				}
 			},
-			resolveName : function(){
+			storyTime : function(){
 				app.api.speak({textKey:app.data.translations.name.restateName,substitutions:[app.data.playerName]})
 					.then(function(r) {
 						return app.api.speak({textKey:app.data.translations.name.myName})
-					})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.name.storeTime,substitutions:[app.data.playerName]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStoryInput.entertain})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStoryInput.input})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStoryInput.makeMeLaugh})
+					}).then(function(r) {
+						app.data.responseAction = function(){
+							app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+							app.api.Game.giantStoryAdj2();
+						}
+						return app.api.speak({textKey:app.data.translations.giantStoryInput.adjective1})
+					});
+			},
+			giantStoryAdj2 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.giantStoryPlace();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
+			},
+			/*
+				-Adj
+				-Adj
+				Place
+				Noun
+				Adj
+				Body part
+				Body part
+				Adj
+				Body part
+				Something you eat
+				Noun
+				Noun
+				Adj
+				Adj
+				Adj
+			*/
+			tellStory : function(){
+				var arr = app.data.giantStoryInput;
+				app.api.speak({textKey:app.data.translations.giantStory["1"],substitutions:[arr[0]]})
 					.then(function(r) {
-						return app.api.speak({textKey:app.data.translations.name.wantToPlay,substitutions:[app.data.playerName]})
+						return app.api.speak({textKey:app.data.translations.giantStory["2"]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["3"],substitutions:[arr[1],arr[2],arr[3]]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["4"],substitutions:[arr[4],arr[5]]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["5"],substitutions:[arr[6]]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["6"],substitutions:[arr[7],arr[8]]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["7"],substitutions:[arr[9]]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["8"],substitutions:[arr[10],arr[11]]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["9"]})
+					}).then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["10"],substitutions:[arr[12],arr[13],arr[14]]})
 					});
 			}
 		}
