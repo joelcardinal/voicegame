@@ -300,6 +300,23 @@ window.app = {
 						return app.api.speak({textKey:app.data.translations.giantStoryInput.adjective1})
 					});
 			},
+			/*
+				-Adj
+				-Adj
+				-Place
+				-Plural Noun
+				-Adj
+				-Body part
+				-Body part
+				-Adj
+				- Body part
+				-Something you eat
+				- Noun
+				- Noun
+				-Adj
+				Adj
+				Adj
+			*/
 			giantStoryAdj2 : function(){
 				app.data.responseAction = function(){
 					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
@@ -307,27 +324,103 @@ window.app = {
 				}
 				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
 			},
-			/*
-				-Adj
-				-Adj
-				Place
-				Noun
-				Adj
-				Body part
-				Body part
-				Adj
-				Body part
-				Something you eat
-				Noun
-				Noun
-				Adj
-				Adj
-				Adj
-			*/
+			giantStoryPlace : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultPlace));
+					app.api.Game.giantStoryPluralNoun();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.place})
+			},
+			giantStoryPluralNoun : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultPluralNoun));
+					app.api.Game.giantStoryAdj3();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.pluralNoun})
+			},
+			giantStoryAdj3 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.giantStoryBodyPart1();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
+			},
+			giantStoryBodyPart1 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultBodyPart));
+					app.api.Game.giantStoryBodyPart2();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.bodyPart})
+			},
+			giantStoryBodyPart2 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultBodyPart));
+					app.api.Game.giantStoryAdj4();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.bodyPart})
+			},
+			giantStoryAdj4 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.giantStoryBodyPart3();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
+			},
+			giantStoryBodyPart3 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultBodyPart));
+					app.api.Game.giantStoryEat();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.bodyPart})
+			},
+			giantStoryEat : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultEat));
+					app.api.Game.giantStoryNoun1();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.eat})
+			},
+			giantStoryNoun1 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultNoun));
+					app.api.Game.giantStoryNoun2();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.noun})
+			},
+			giantStoryNoun2 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultNoun));
+					app.api.Game.giantStoryAdj5();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.noun})
+			},
+			giantStoryAdj5 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.giantStoryAdj6();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
+			},
+			giantStoryAdj6 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.giantStoryAdj7();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
+			},
+			giantStoryAdj7 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.tellStory();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective2})
+			},
 			tellStory : function(){
 				var arr = app.data.giantStoryInput;
-				app.api.speak({textKey:app.data.translations.giantStory["1"],substitutions:[arr[0]]})
+				app.api.speak({textKey:app.data.translations.giantStory.intro,substitutions:[app.data.playerName]})
 					.then(function(r) {
+						return app.api.speak({textKey:app.data.translations.giantStory["1"],substitutions:[arr[0]]})
+					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.giantStory["2"]})
 					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.giantStory["3"],substitutions:[arr[1],arr[2],arr[3]]})

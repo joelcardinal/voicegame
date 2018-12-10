@@ -95,6 +95,11 @@
 			"Pluto",
 			"moon"
 		],
+		"pluralNoun" : [
+			"skyscrapers",
+			"buildings",
+			"volcanoes"
+		],
 		"defaultNoun" : [
 			"worm",
 			"toilet",
@@ -112,6 +117,7 @@
 		]
 	},
 	"giantStory" : {
+		"intro" : ["That's quite enough {{0}}.  I hope your mother didn't overhear your word choices. Now. Make sure your ear holes are open fleshy human. I've computed the story.  Playback begins in 3 2 1."],
 		"1":["In a {{0}} town, not too far, there lived a giant named Geoffrey."],
 		"2":["However, no one knew of the giant’s existence."],
 		"3":["He hid atop an {{0}} {{1}} at the center of town that towered above all other {{2}}."],
