@@ -9,19 +9,64 @@
 	}
 	body {
 		cursor: pointer;
-	    pointer-events: all;
+		pointer-events: all;
+	}
+	.flexWrap {
+		display: flex;
+		flex-flow: row wrap;
+		place-content: flex-start center;
+		align-items: stretch;
+		height: 100%;
+		width: 100%;
+		flex-grow: 1;
+		vertical-align: baseline;
+	}
+	.flexCenter {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		text-align: center;
+		vertical-align: baseline;
+	}
+	#start {
+		font-size: 24px;
+		font-weight: bold;
+		color: #aeff5c;
+		background-color: #000;
+		border: none;
+		border-radius: 5px;
+		padding: 5px 10px;
+		-webkit-box-shadow: 14px 14px 14px -6px rgba(255,0,0,1);
+		-moz-box-shadow: 14px 14px 14px -6px rgba(255,0,0,1);
+		box-shadow: 14px 14px 14px -6px rgba(255,0,0,1);
+		cursor: pointer;
+		outline: none;
+		transition: transform 0.23s;
+	}
+	#start:hover {
+		color: rgba(255,0,0,1);
+	}
+	#start:active {
+		margin: 10px 0 0 10px;
+		-webkit-box-shadow: 4px 4px 4px -6px rgba(255,0,0,1);
+		-moz-box-shadow: 4px 4px 4px -6px rgba(255,0,0,1);
+		box-shadow: 4px 4px 4px -6px rgba(255,0,0,1);
+		cursor: pointer;
 	}
 </style>
 </head>
 <body>
-	<div>
-		<div style="display:none;" id="noSupport">Your browser does not support speechSynthesis. No game for you!</div>
-		<div style="display:none;" id="output"></div>
-		<!-- TODO Button should stick to cursor if you click off button, and if hit key change text to don't push buttons? -->
-		<button type="button" id="start">Don't Click</button>
-		<select style="display:none;" id="lang" name="lang">
-			<option value="en-GB" selected></option>
-		</select>
+	<div class="flexWrap">
+		<div class="flexCenter">
+			<div style="display:none;" id="noSupport">Your browser does not support speechSynthesis. No fun for you!</div>
+			<div style="display:none;" id="output"></div>
+			<!-- TODO Button should stick to cursor if you click off button, and if hit key change text to don't push buttons? -->
+			<button type="button" id="start">Don't Click This!!!</button>
+			<select style="display:none;" id="lang" name="lang">
+				<option value="en-GB" selected></option>
+			</select>
+		</div>
 	</div>
 <script>	
 (function(){
@@ -45,6 +90,11 @@ window.app = {
 	},
 	api: {
 		init: function(){
+			document.addEventListener('mousemove', function(ev){
+				document.getElementById('start').style.transform = 'translateY('+(ev.clientY-160)+'px)';
+				document.getElementById('start').style.transform += 'translateX('+(ev.clientX-650)+'px)';            
+			},false);
+
 			if(!'speechSynthesis' in window){
 				document.getElementById('noSupport').style.display('block');
 				return
@@ -236,6 +286,16 @@ window.app = {
 				console.error('crudAction not found');
 			}
 		},
+		showButton : function(){
+			document.getElementById('start').style.display = 'block';
+			app.api.Game.start();
+		},
+		notYouAgain : function(){
+			app.api.speak({textKey:app.data.translations.name.restateName,substitutions:[app.data.playerName]})
+				.then(function(r) {
+					app.api.Game.start();
+				});
+		},
 		Game : {
 			start : function(){
 				// NOTE: {textKey:app.data.translations.start.helloWorld,substitutions:[],voice:null,pitch:null,rate:null}
@@ -256,7 +316,11 @@ window.app = {
 			},
 			name : function(){
 				// TODO if name found in localStorage, "Not you again, haven't you had enough?" then
-				// play last state say 
+				// play last state say
+				if(window.localStorage.getItem(app.data.speechResult)){
+					app.data.playerName = app.data.speechResult;
+					app.api.notYouAgain();
+				}
 				app.api.createPlayer();
 				app.api.speak({textKey:app.data.translations.name.nameResponse,substitutions:[app.data.speechResult,'Wow']})
 				.then(function(r) {
@@ -285,7 +349,7 @@ window.app = {
 					.then(function(r) {
 						return app.api.speak({textKey:app.data.translations.name.myName})
 					}).then(function(r) {
-						return app.api.speak({textKey:app.data.translations.name.storeTime,substitutions:[app.data.playerName]})
+						return app.api.speak({textKey:app.data.translations.name.storyTime,substitutions:[app.data.playerName]})
 					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.giantStoryInput.entertain})
 					}).then(function(r) {
@@ -293,11 +357,7 @@ window.app = {
 					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.giantStoryInput.makeMeLaugh})
 					}).then(function(r) {
-						app.data.responseAction = function(){
-							app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
-							app.api.Game.giantStoryAdj2();
-						}
-						return app.api.speak({textKey:app.data.translations.giantStoryInput.adjective1})
+						app.api.Game.giantStoryAdj1();
 					});
 			},
 			/*
@@ -317,6 +377,13 @@ window.app = {
 				Adj
 				Adj
 			*/
+			giantStoryAdj1 : function(){
+				app.data.responseAction = function(){
+					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
+					app.api.Game.giantStoryAdj2();
+				}
+				app.api.speak({textKey:app.data.translations.giantStoryInput.adjective1})
+			},
 			giantStoryAdj2 : function(){
 				app.data.responseAction = function(){
 					app.data.giantStoryInput.push(app.data.speechResult.trim() ? app.data.speechResult : app.api.getRandom(app.data.translations.giantStoryInput.defaultAdjective));
@@ -438,7 +505,9 @@ window.app = {
 						return app.api.speak({textKey:app.data.translations.giantStory["9"]})
 					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.giantStory["10"],substitutions:[arr[12],arr[13],arr[14]]})
-					});
+					}).then(function(r) {
+						app.api.Game.terminating();
+					})
 			},
 			terminating : function(){
 				var arr = app.data.giantStoryInput;
@@ -447,6 +516,8 @@ window.app = {
 						return app.api.speak({textKey:app.data.translations.end.eraseStory})
 					}).then(function(r) {
 						return app.api.speak({textKey:app.data.translations.end.terminating,substitutions:[arr[8]]})
+					}).then(function(r) {
+						app.api.showButton();
 					})
 			}
 		}
