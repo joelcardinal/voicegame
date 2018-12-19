@@ -1,7 +1,11 @@
 {
 	"error" : [
-		"What did you do?  Did you press a button?  If so, it was the wrong one.",
-		"I wasn't paying attention, try saying something interesting."
+		"We're you speaking?  Try again using less snorts and grunts.",
+		"I wasn't paying attention, try saying something interesting.",
+		"I don't speak gibberish.  Try again."
+	],
+	"buttonPush" : [
+		"What did you do?  Did you press a button?  If so, it was the wrong one."
 	],
 	"start" : {
 		"helloWorld" : [

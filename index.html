@@ -59,7 +59,7 @@
 <body>
 	<div class="flexWrap">
 		<div class="flexCenter">
-			<div style="display:none;" id="noSupport">Your browser does not support speechSynthesis. No fun for you!</div>
+			<div style="display:none;" id="noSupport">Your browser does not support SpeechSynthesis or SpeechRecognition.  No fun for you!  Try using recent Chrome on desktop.</div>
 			<div style="display:none;" id="output"></div>
 			<!-- TODO Button should stick to cursor if you click off button, and if hit key change text to don't push buttons? -->
 			<button type="button" style="display:none;" id="start">Don't Click This!!!</button>
@@ -92,7 +92,7 @@ window.app = {
 		init: function(){
 
 
-			if(!'speechSynthesis' in window){
+			if(!'speechSynthesis' in window || !('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)){
 				document.getElementById('noSupport').style.display = 'block';
 				return
 			}else{
@@ -109,7 +109,7 @@ window.app = {
 			window.addEventListener('recognitionOnResult',function(e){
 				app.data.responseAction(e.detail.speechResult);
 			});
-			// need button to init sound? Review Google audio rules
+			// need user to interact with button to init sound, Google audio API rules
 			document.getElementById('start').addEventListener('click',function(e){
 				e.stopPropagation();
 				app.api.getVoices();
@@ -136,7 +136,7 @@ window.app = {
 		    recognition.onspeechend = function() {
 		      	recognition.stop();
 		        document.querySelector('body').classList.remove('noClick');
-				console.log('recognition.onspeechend');
+				console.log('SpeechRecognition.onspeechend');
 		  	}
 		    recognition.onerror = function(event) {
 		        document.querySelector('body').classList.remove('noClick');
@@ -152,6 +152,9 @@ window.app = {
 		    }
 
 		    recognition.onend = function(event) {
+				if(!app.data.speechResult.trim()){
+					//app.api.speak({textKey:app.data.translations.error});
+				}
 				document.querySelector('body').classList.remove('noClick');
 		        //Fired when the speech recognition service has disconnected.
 		        console.log('SpeechRecognition.onend');
@@ -233,8 +236,10 @@ window.app = {
 		},
 		speak : function (obj){
 			return new Promise(function(resolve, reject) {
+				document.querySelector('body').classList.add('noClick');
 				var outputText = app.api.getText(obj.textKey);
 			    if (app.data.synth.speaking) {
+					//resolve(true);
 					reject(Error('speechSynthesis.speaking dropping request'));
 			        return
 			    }
@@ -248,6 +253,7 @@ window.app = {
 						resolve(true);
 			    	}
 			    	utterThis.onerror = function (event) {
+						document.querySelector('body').classList.remove('noClick');
 						reject(Error('SpeechSynthesisUtterance.onerror'));
 			    	}
 					utterThis.voice = obj.voice || app.data.voices.jenkins;
@@ -259,6 +265,7 @@ window.app = {
 			    	app.data.synth.speak(utterThis);
 					console.log(utterThis);
 			  	}else{
+					console.error('No outputText found.');
 			  		resolve(true);
 			  	}
 			});
@@ -278,7 +285,7 @@ window.app = {
 		},
 		db : function(crudAction,playerData){
 			if(crudAction === 'create'){
-				window.localStorage.setItem(app.data.playerName,JSON.stringify({step:'resolveName'}));
+				window.localStorage.setItem(app.data.playerName,JSON.stringify({step:'storyTime'}));
 			}else if('read'){
 				return JSON.parse(window.localStorage.getItem(app.data.playerName));
 			}else if('update'){
@@ -296,9 +303,9 @@ window.app = {
 			app.api.Game.start();
 		},
 		notYouAgain : function(){
-			app.api.speak({textKey:app.data.translations.name.restateName,substitutions:[app.data.playerName]})
+			app.api.speak({textKey:app.data.translations.notYouAgain.what,substitutions:[app.data.playerName]})
 				.then(function(r) {
-					app.api.Game.start();
+					app.api.Game.giantStoryAdj1();
 				});
 		},
 		Game : {
@@ -314,37 +321,41 @@ window.app = {
 							app.data.recognition.start();
 						});
 						app.data.responseAction = function(){
+							var name = JSON.parse(JSON.stringify(app.data.speechResult));
+							if(window.localStorage.getItem(name)){
+								app.data.playerName = name;
+								return app.api.notYouAgain();
+							}
 							app.api.Game.name();
 						}
 						return app.api.speak({textKey:app.data.translations.start.clickToSpeak});
 					});
 			},
 			name : function(){
-				// TODO if name found in localStorage, "Not you again, haven't you had enough?" then
-				// play last state say
-				if(window.localStorage.getItem(app.data.speechResult)){
-					app.data.playerName = app.data.speechResult;
-					app.api.notYouAgain();
-				}
 				app.api.createPlayer();
 				app.api.speak({textKey:app.data.translations.name.nameResponse,substitutions:[app.data.speechResult,'Wow']})
-				.then(function(r) {
-					app.data.responseAction = function(){
-						app.api.Game.nameConfirm();
-					}
-					return app.api.speak({textKey:app.data.translations.name.nameConfirm});
-				});
+					.then(function(r) {
+						app.data.responseAction = function(){
+							app.api.Game.nameConfirm();
+						}
+						return app.api.speak({textKey:app.data.translations.name.nameConfirm});
+					});
 			},
 			nameConfirm : function(){
 				if(/no/.test(app.data.speechResult)){
-					return app.api.speak({textKey:app.data.translations.name.stateAgain})
-					.then(function(r) {
-						app.data.responseAction = function(){
-							app.api.createPlayer();
-							app.api.Game.storyTime();
-						}
-						return app.api.speak({textKey:app.data.translations.start.askName})
-					});
+					app.api.speak({textKey:app.data.translations.name.stateAgain})
+						.then(function(r) {
+							app.data.responseAction = function(){
+								var name = JSON.parse(JSON.stringify(app.data.speechResult));
+								if(window.localStorage.getItem(name)){
+									app.data.playerName = name;
+									return app.api.notYouAgain();
+								}
+								app.api.createPlayer();
+								app.api.Game.storyTime();
+							}
+							return app.api.speak({textKey:app.data.translations.start.askName})
+						});
 				}else{
 					app.api.Game.storyTime();
 				}
