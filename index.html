@@ -62,7 +62,7 @@
 			<div style="display:none;" id="noSupport">Your browser does not support speechSynthesis. No fun for you!</div>
 			<div style="display:none;" id="output"></div>
 			<!-- TODO Button should stick to cursor if you click off button, and if hit key change text to don't push buttons? -->
-			<button type="button" id="start">Don't Click This!!!</button>
+			<button type="button" style="display:none;" id="start">Don't Click This!!!</button>
 			<select style="display:none;" id="lang" name="lang">
 				<option value="en-GB" selected></option>
 			</select>
@@ -90,15 +90,20 @@ window.app = {
 	},
 	api: {
 		init: function(){
-			document.addEventListener('mousemove', function(ev){
-				document.getElementById('start').style.transform = 'translateY('+(ev.clientY-160)+'px)';
-				document.getElementById('start').style.transform += 'translateX('+(ev.clientX-650)+'px)';            
-			},false);
+
 
 			if(!'speechSynthesis' in window){
-				document.getElementById('noSupport').style.display('block');
+				document.getElementById('noSupport').style.display = 'block';
 				return
+			}else{
+				var button = document.getElementById('start');
+				button.style.display = 'block';
+				document.addEventListener('mousemove', function(ev){
+					button.style.transform = 'translateY('+(ev.clientY-160)+'px)';
+					button.style.transform += 'translateX('+(ev.clientX-650)+'px)';            
+				},false);
 			}
+
 			app.api.setRecognition();
 			// user response handler
 			window.addEventListener('recognitionOnResult',function(e){
