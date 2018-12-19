@@ -153,7 +153,7 @@ window.app = {
 
 		    recognition.onend = function(event) {
 				if(!app.data.speechResult.trim()){
-					//app.api.speak({textKey:app.data.translations.error});
+					app.api.speak({textKey:app.data.translations.error});
 				}
 				document.querySelector('body').classList.remove('noClick');
 		        //Fired when the speech recognition service has disconnected.
